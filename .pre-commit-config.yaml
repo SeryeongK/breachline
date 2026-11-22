@@ -1,0 +1,36 @@
+# pre-commit 설정. 설치: brew install pre-commit && pre-commit install
+# 버전 갱신: pre-commit autoupdate
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  # 비밀 값(API 키, 토큰, 비밀번호) 커밋 차단
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
+  # 기본 위생 검사
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: detect-private-key        # 개인 키 파일 내용 차단
+      - id: check-added-large-files   # 큰 파일 실수 커밋 차단 (기본 500KB)
+      - id: check-merge-conflict      # 충돌 표시(<<<<<<<) 남은 채 커밋 차단
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # 커밋 메시지가 Conventional Commits 형식인지 검사
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.5.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert]
+
+# 모듈별 린터(ruff, eslint, spotless 등)는 각 모듈을 만들 때 추가
